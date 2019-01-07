@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.canvas {
+  border: 1px solid #0ff;
+  width: 500px;
+  height: 400px;
+  margin: 100px;
+}
+
+.clock {
+  border: 1px solid #0ff;
+  margin: 0 100px 100px;
+  background-color: #000;
+}
