@@ -1,7 +1,6 @@
-let proxy = new Proxy(target, handler)
 
-const onWatch = (target, setBind, logger) => {
-  return new Proxy(target, {
+const onWatch = (obj, setBind, logger) => {
+  let handle =  {
     get (target, property, receiver) {
       logger(target, property)
       return Reflect.get(target, property, receiver)
@@ -10,7 +9,8 @@ const onWatch = (target, setBind, logger) => {
       setBind(value)
       return Reflect.set(target, property, value, receiver)
     }
-  })
+  }
+  return new Proxy(obj, handle)
 }
 
 let obj = {
@@ -23,5 +23,5 @@ let watch = onWatch(obj, (v) => {
   console.log(`get ${property} : ${target[property]}`)
 })
 
-obj.a
-obj.b = 3
+watch.a
+watch.b = 3

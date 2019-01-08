@@ -104,10 +104,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   // Override the current require with this new one
   return newRequire;
 })({"js/utils/useProxy.js":[function(require,module,exports) {
-var proxy = new Proxy(target, handler);
 
-var onWatch = function onWatch(target, setBind, logger) {
-  return new Proxy(target, {
+var onWatch = function onWatch(obj, setBind, logger) {
+  var handle = {
     get: function get(target, property, receiver) {
       logger(target, property);
       return Reflect.get(target, property, receiver);
@@ -116,7 +115,8 @@ var onWatch = function onWatch(target, setBind, logger) {
       setBind(value);
       return Reflect.set(target, property, value, receiver);
     }
-  });
+  };
+  return new Proxy(obj, handle);
 };
 
 var obj = {
@@ -129,8 +129,8 @@ var watch = onWatch(obj, function (v) {
   console.log("get " + property + " : " + target[property]);
 });
 
-obj.a;
-obj.b = 3;
+watch.a;
+watch.b = 3;
 },{}],"../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -160,7 +160,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '63926' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '57545' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
