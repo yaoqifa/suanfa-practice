@@ -7,6 +7,37 @@
   <title>useProxy</title>
 </head>
 <body>
-  <script src="./js/utils/useProxy.js"></script>
+  <!-- <script src="./js/utils/useProxy.js"></script> -->
+  <ul></ul>
+  <script>
+    (() => {
+      console.time('bigInsert')
+      const bigInsert = (el, total, once) => {
+        const max = total / once
+        let count = 0
+        const add = () => {
+          const fragment = document.createDocumentFragment()
+          for (let i = 0; i < once; i++) {
+            const li = document.createElement('li')
+            li.innerText = Math.floor(Math.random() * total)
+            fragment.appendChild(li)
+          }
+          el.appendChild(fragment)
+          count++
+          loop()
+        }
+        const loop = () => {
+          if (count < max) {
+            window.requestAnimationFrame(add)
+          }
+        }
+        loop()
+      }
+      const ul = document.querySelector('ul')
+      bigInsert(ul, 100000, 100)
+      console.timeEnd('bigInsert')
+    })()
+  </script>
+
 </body>
 </html>

@@ -1,3 +1,8 @@
+// 多维数组降级
+export const reduceArr = (arr) => {
+  return Array.isArray(arr) ? arr.reduce((a, b) => [...a, ...reduceArr(b)], []) : [arr]
+}
+
 export function once (fn) {
   let flag = false
   return function () {
