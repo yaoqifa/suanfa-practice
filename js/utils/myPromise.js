@@ -167,3 +167,62 @@ function resolutionProcedure(promise2, x, resolve, reject) {
     resolve(x)
   }
 }
+
+
+// const PENDING = 'pending'
+// const RESOLVED = 'resolved'
+// const REJECTED = 'rejected'
+
+// function MyPromise (fn) {
+//   this.state = PENDING
+//   this.value = null
+//   this.resolvedCallbacks = []
+//   this.rejectedCallbacks = []
+
+//   this.resolve = (value) => {
+//     if (value instanceof MyPromise) {
+//       return value.then(this.resolve, this.reject)
+//     }
+//     setTimeout(() => {
+//       if (this.state === PENDING) {
+//         this.state = RESOLVED
+//         this.value = value
+//         this.resolvedCallbacks.map(cb => cb(this.value))
+//       }
+//     }, 0)
+//   }
+//   this.reject = (value) => {
+//     setTimeout(() => {
+//       if (this.state === PENDING) {
+//         this.state = REJECTED
+//         this.value = value
+//         this.rejectedCallbacks.map(cb => cb(this.value))
+//       }
+//     }, 0)
+//   }
+//   try {
+//     fn(this.resolve, this.reject)
+//   } catch (e) {
+//     reject(e)
+//   }
+// }
+
+// MyPromise.prototype.then = function (onFulfilled，onRejected) {
+//   let promise2
+//   onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v
+//   onRejected = typeof onRejected === 'function' ? onRejected : v => { throw v }
+//   if (this.state === PENDING) {
+//     this.resolvedCallbacks.push(onFulfilled)
+//     this.rejectedCallbacks.push(onRejected)
+//   }
+//   if (this.state === RESOLVED) {
+//     setTimeout(() => {
+//       onFulfilled(this.value)
+//     }, 0)
+//   }
+//   if (this.state === REJECTED) {
+//     setTimeout(() => {
+//       onRejected(this.value)
+//     }, 0)
+//   }
+// }
