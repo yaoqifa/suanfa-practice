@@ -6,7 +6,7 @@ A.prototype.printName = function () {
 }
 
 function B (name, age) {
-  A.call(this)
+  A.apply(this, arguments)
   this.name = name
   this.age = age
 }
