@@ -12,10 +12,21 @@ class Node {
 }
 
 function reConstructBinaryTree (pre, mid) {
-  let root = null
+  let root = reCon(0, pre.length - 1, pre, 0, mid.length - 1, mid)
   return root
 }
 
 function reCon (pStart, pEnd, pre, mStart, mEnd, mid) {
-
+  if (pStart > pEnd || mStart > mEnd) {
+    return null
+  }
+  let r = pre[pStart]
+  let node = new Node(r)
+  for (let i = mStart; i <= mEnd; i++) {
+    if (r === mid[i]) {
+      node.left = reCon(pStart + 1, pStart + i - mStart, pre, mStart, i - 1, mid)
+      node.right = reCon(pStart + i - mStart + 1, pEnd, pre, i + 1, mEnd, mid)
+    }
+  }
+  return node
 }
