@@ -7,7 +7,7 @@
 // throttle节流 不管连续触发多次，总是以特定的频率触发
 // 节流：调节频率，以一定的频率去响应
 // 搜索联想
-// 响应拖拽
+// 响应拖拽, resize
 
 // 假如有一个饮水机，规定按下按钮之后2秒后开始出水，有个闲得x疼的人很快的按按钮10秒，饮水机会作何反应呢？
 // 防抖（debounce）：在按下按钮和出水的这2秒内如果还有人按按钮，饮水机会重新开始计算2秒，也就是说总是以最新的操作为基准来计算时间
@@ -15,10 +15,10 @@
 
 const debounce = (fn, wait) => {
   let timer
-  return () => {
+  return function (...args) {
     clearTimeout(timer)
     timer = setTimeout(() => {
-      fn()
+      fn.apply(this, args)
     }, wait)
   }
 }
@@ -27,16 +27,46 @@ const throttle = (fn, wait) => {
   let timer
   let start = Date.now()
 
-  return () => {
+  return function (...params) {
     let now = Date.now()
     clearTimeout(timer)
     if (now - start >= wait) {
-      fn()
+      fn.apply(this, params)
       start = now
     } else {
       timer = setTimeout(() => {
-        fn()
+        fn.apply(this, params)
       }, wait)
     }
   }
 }
+
+// 使用
+function lianxiang (e) {
+  let arr = ['a', 'abc', 'abd', 'cdd', 'eff', 'af', 'aef', 'bbbc', 'abda', 'abcde', 'cde']
+  let res = []
+  let reg = new RegExp(`${e.target.value}`, 'g')
+  arr.forEach(item => {
+    if (reg.test(item)) {
+      res.push(item)
+    }
+  })
+  updateUl(res)
+}
+
+function updateUl (res) {
+  let ul = document.getElementById('resUl')
+  let fg = document.createDocumentFragment()
+  res.forEach(i => {
+    let li = document.createElement('li')
+    li.innerText = i
+    fg.appendChild(li)
+  })
+  while (ul.children.length) {
+    ul.removeChild(ul.children[0])
+  }
+  ul.appendChild(fg)
+}
+
+let input = document.getElementById('input')
+input.addEventListener('input', debounce(lianxiang, 300))
