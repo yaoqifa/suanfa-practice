@@ -106,3 +106,6 @@ export const compose2 = (...fns) => {
     return arrayFunction.reduce(fns.reverse(), (acc, fn) => fn(acc), value)
   }
 }
+
+const isArray = obj => Object.prototype.toString.call(obj) === '[object Array]'
+const isType = type => obj => Object.prototype.toString.call(obj) === `[object ${type}]`

@@ -70,3 +70,14 @@ function updateUl (res) {
 
 let input = document.getElementById('input')
 input.addEventListener('input', debounce(lianxiang, 300))
+
+
+let p = (time) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({
+        long: time
+      })
+    }, time)
+  })
+}
