@@ -45,7 +45,7 @@ const throttle = (fn, wait) => {
 function lianxiang (e) {
   let arr = ['a', 'abc', 'abd', 'cdd', 'eff', 'af', 'aef', 'bbbc', 'abda', 'abcde', 'cde']
   let res = []
-  let reg = new RegExp(`${e.target.value}`, 'g')
+  let reg = new RegExp(e.target.value, 'g')
   arr.forEach(item => {
     if (reg.test(item)) {
       res.push(item)
