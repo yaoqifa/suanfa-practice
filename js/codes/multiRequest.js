@@ -25,32 +25,36 @@ class Schedule {
       return;
     }
     this.executing++;
-    const p = this.task.splice(0, 1);
-    debugger
-    p[0].then((url) => {
+    const p = this.task.shift();
+    p.then((url) => {
       this.executing--;
       this.runTask();
-    })
+    });
   }
 }
 
 const req = (url) => {
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('get',url,true); //这里第三个参数不能为false,会变成同步
+    xhr.open('get', url, true); //这里第三个参数不能为false,会变成同步
     xhr.onload = () => {
       if(xhr.status === 200) {
-        resolve(url)
+        resolve(url);
       } else {
-        reject(url)
+        reject(url);
       }
     }
     xhr.send();
   })
 }
+const printFunc = (promise) => {
+  return promise.then(url => {
+    console.log(url);
+  })
+}
 const multiRequest = (urls, maxNum) => {
   const schedule = new Schedule(maxNum);
   urls.forEach((url) => {
-    schedule.add(req(url).finally(res => console.log(res)));
+    schedule.add(printFunc(req(url)));
   })
 }
