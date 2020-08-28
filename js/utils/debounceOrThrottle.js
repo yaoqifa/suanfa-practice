@@ -36,7 +36,7 @@ const throttle = (fn, wait) => {
     } else {
       timer = setTimeout(() => {
         fn.apply(this, params)
-      }, wait)
+      }, start + wait - now)
     }
   }
 }
@@ -80,4 +80,104 @@ let p = (time) => {
       })
     }, time)
   })
+}
+
+
+const debouncePromise = (func, wait = 0) => {
+  let timer = null
+  let args
+
+  function debounced(...arg) {
+    args = arg
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+    return new Promise((resolve, reject) => {
+      timer = setTimeout(async () => {
+        try {
+          const result  = await func.apply(this, args)
+          resolve(result)
+        } catch (e) {
+          reject(e)
+        } finally {
+          cancel()
+        }
+      }, wait)
+    })
+
+  }
+  function cancel() {
+    clearTimeout(timer)
+    args = null
+    timer = null
+  }
+
+  function flush() {
+    cancel()
+    return func.apply(this, args)
+  }
+
+  debounced.cancel = cancel
+  debounced.flush = flush
+
+  return debounced
+
+}
+
+const throttlePromise = (func, wait) => {
+  let args
+  let timer = null
+  let firstTimestamp
+
+  function throttled(...arg) {
+    if (!firstTimestamp) {
+      firstTimestamp = Date.now()
+    }
+    args = arg
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+
+    return new Promise(async (resolve, reject) => {
+      if (Date.now() - firstTimestamp >= wait) {
+        try {
+          const result = await func.apply(this, args)
+          resolve(result)
+        } catch (e) {
+          reject(e)
+        } finally {
+          cancel()
+        }
+      } else {
+        timer = setTimeout(async () => {
+          try {
+            const result = await func.apply(this, args)
+            resolve(result)
+          } catch (e) {
+            reject(e)
+          } finally {
+            cancel()
+          }
+        }, wait + firstTimestamp - Date.now())
+      }
+    })
+  }
+  function cancel() {
+    clearTimeout(timer)
+    args = null
+    timer = null
+    firstTimestamp = null
+  }
+
+  function flush() {
+    cancel()
+    return func.apply(this, args)
+  }
+
+  throttled.cancel = cancel
+  throttled.flush = flush
+
+  return throttled
 }
