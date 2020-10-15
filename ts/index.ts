@@ -10,4 +10,15 @@ interface SearchFunc {
 
 name2.toUpperCase()
 
-mySum('123', 456);
+mySum(345, 456);
+
+interface A {
+  a: number;
+  b?: string;
+}
+
+const obj: A = {
+  a: 123
+}
+
+const __DEV__ = false
