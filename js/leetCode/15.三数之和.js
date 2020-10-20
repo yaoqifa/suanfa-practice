@@ -47,6 +47,7 @@ var threeSum = function(nums) {
     return res
   }
   nums.sort((a, b) => a - b)
+  if (nums)
   for (let i = 0; i < len - 2; i++) {
     const ni = nums[i]
     if (i >= 1 && ni === nums[i - 1]) {
