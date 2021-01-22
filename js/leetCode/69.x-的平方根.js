@@ -29,5 +29,16 @@ var mySqrt = function(x) {
   }
   return res;
 };
+
+// var mySqrt = function(x) {
+//   if (x === 0 || x === 1) {
+//     return x
+//   }
+//   let r = x;
+//   while (r > x / r) {
+//     r = (r + x / r) / 2
+//   }
+//   return r;
+// };
 // @lc code=end
 
