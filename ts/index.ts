@@ -1,4 +1,4 @@
-const name2: string = 'yqf'
+export const name2: string = 'yqf'
 
 function mySum (x: number, y: number, z?: number): number {
   return x + y + z
@@ -150,3 +150,28 @@ function getLength(input: string | number): number {
 declare var jQuery: (selector: string) => any
 
 // jQuery('#aaa')
+
+
+export namespace Utils {
+  export function log(msg): void {
+    console.log(msg)
+  }
+  export function warn(msg): void {
+    console.warn(msg)
+  }
+}
+
+let bool: boolean[];
+bool = [!!1, true, Boolean('true'), null, undefined]
+
+
+interface Name {
+  a: string;
+  b: string;
+}
+// 内联类型注解, 当不是复用时，可以不用interface声明
+let name3: {
+  a: string;
+  b: string;
+}
+
