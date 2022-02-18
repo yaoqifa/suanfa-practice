@@ -52,3 +52,17 @@ var solveNQueens = function(n) {
 // solveNQueens(8),
 // solveNQueens(9),
 // solveNQueens(10))
+
+result = []
+function backtrack(root, n) {
+  if (fullfilled) {
+    result.push(root)
+    return
+  }
+  // for 循环中递归，backtrack前做选择，backtrack后撤销
+  for (let i = 0; i < root.length; i++) {
+    // chose
+    backtrack(root, i)
+    // no chose
+  }
+}
