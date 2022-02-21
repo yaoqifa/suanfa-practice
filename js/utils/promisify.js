@@ -12,6 +12,27 @@ function promisify(origin) {
     })
   }
 }
+// var fs = require("fs");
+// fs.readFile("foo.json", "utf8", function(err, content){
+//     if(err){
+//         //异常情况
+//     }else{
+//         //正常情况
+//     }
+// })
+
+// const read = promisify(fs.readFile, fs)
+// read("foo.json", "utf8").then().catch()
+const promisify = (fn, receive) => {
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      fn.apply(receive, [...args, (err, data) => {
+        return err ? reject(err) : resolve(data)
+      }])
+    })
+  }
+
+}
 
 
 // test
