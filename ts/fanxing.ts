@@ -185,3 +185,16 @@ type StudentOmit = Omit<Student, 'name'>
 
 type Record2<K extends string | number | symbol, T> = {[P in K]: T}
 type recordTest = Record2<'x' | 'y' | 'z', string>
+
+function returnType(a: number, b: string) {
+  return a || b
+}
+type typeofFn = typeof returnType
+type returnT = ReturnType<typeofFn>
+type paramR = Parameters<typeofFn>
+
+type ReturnType2<T> = T extends (...args : any[]) => infer U ? U : never
+type returnT2 = ReturnType2<typeofFn>
+
+type Parameters2<T> = T extends (...args : infer P) => any ? P : never
+type paramR2 = Parameters2<typeofFn>
