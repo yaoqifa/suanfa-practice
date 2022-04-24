@@ -143,3 +143,30 @@ function fattenObj(obj) {
   flatten(obj)
   return res
 }
+
+// const data1 = {"a.b.c": 1, "a.b.d": 2}
+// const data2 = {"a.b.e": 3, "a.b.f": 4}
+// 把如上两个对象合并成一个JSON，其中的.需要处理成对应的层级
+
+function toJSON(data1, data2) {
+  let obj = {}
+  function spread(key, val) {
+    let arr = key.split('.')
+    arr.reduce((pre, cur, index) => {
+      if (!pre[cur]) {
+        pre[cur] = {}
+      }
+      if (index === arr.length - 1) {
+        pre[cur] = val
+      }
+      return pre[cur]
+    }, obj)
+  }
+  for (let key in data1) {
+    spread(key, data1[key])
+  }
+  for (let key in data2) {
+    spread(key, data2[key])
+  }
+  return obj
+}

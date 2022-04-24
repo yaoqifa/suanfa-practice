@@ -39,3 +39,19 @@ function findCache(source) {
     }
   }
 }
+
+const map = new WeakMap()
+function deepCopy(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj
+  }
+  if (map.get(obj)) {
+    return map.get(obj)
+  }
+  map.set(obj, obj)
+  let newObj = Array.isArray(obj) ? [] : {}
+  Reflect.ownKeys(obj).forEach((key) => {
+    newObj[key] = obj[key]
+  })
+  return newObj
+}

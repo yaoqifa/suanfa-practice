@@ -1,5 +1,5 @@
-export const debounce  = (fn, wait = 50) => {
-  let timer = 0
+export const debounce = (fn, wait = 50) => {
+  let timer
   return function (...args) {
     if (timer) {
       clearTimeout(timer)
@@ -9,6 +9,7 @@ export const debounce  = (fn, wait = 50) => {
     }, wait)
   }
 }
+
 
 // 对于按钮防点击来说的实现：如果函数是立即执行的，就立即调用，如果函数是延迟执行的，就缓存上下文和参数，放到延迟函数中去执行。
 // 一旦我开始一个定时器，只要我定时器还在，你每次点击我都重新计时。一旦你点累了，定时器时间到，定时器重置为 null，就可以再次点击了。
