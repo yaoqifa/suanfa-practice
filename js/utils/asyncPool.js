@@ -75,6 +75,14 @@ function multiLoadImage(urls = [], multi, asyncFunc) {
 
 const resData = await multiLoadImage([1,2,3,4,5,1,2], 3, loadImage2)
 
+function asyncFunc(i) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(i, Date.now());
+      resolve(i);
+    }, i * 1000);
+  });
+}
 
 function concurrent(urls, limit, asyncFunc) {
   const len = urls.length

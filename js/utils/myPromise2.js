@@ -4,7 +4,6 @@ const STATUS = {
   REJECTED: 'rejected'
 }
 
-
 function isObj(x) {
   return typeof x === 'object'
 }
@@ -51,7 +50,6 @@ function resolvePromise(promise2, x, resolve, reject) {
     resolve(x)
   }
 }
-
 class Promise {
   constructor(executor) {
     this.status = STATUS.PENDING // 默认pending
@@ -133,7 +131,6 @@ class Promise {
       }
     })
   }
-
   race(promisesArr) {
     return new Promise((resolve, reject) => {
       for (let i = 0; i < promisesArr.length; i++) {
@@ -141,20 +138,17 @@ class Promise {
       }
     })
   }
-
   resolve(value) {
     return new Promise((resolve, reject) => {
       resolve(value)
     })
   }
 
-
   reject(value) {
     return new Promise((resolve, reject) => {
       reject(value)
     })
   }
-
   allSettled(promiseArr) {
     return new Promise((resolve, reject) => {
       let count = 0;
