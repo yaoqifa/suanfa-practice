@@ -22,6 +22,9 @@ const defaultProps = {
   opacity: 0.8,
 };
 
+// 增加事件系统，on和emit toast事件
+// 暴露出 toast.success('content', delay), 内部emit事件
+
 const Toast: FC<ToastProps> = (p) => {
   const props = mergeProps(defaultProps, p);
   const ref = useRef<HTMLDivElement>(null);

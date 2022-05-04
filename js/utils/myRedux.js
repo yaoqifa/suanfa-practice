@@ -1,103 +1,172 @@
-// 简写 Redux
-// mydux.js文件
-// function createStore(reducer) {
-//   /**
-//    * 1.注册用到的方法,并return出去提供使用
-//    * 2.定义默认的状态与事件池
-//    * 3.默认先触发一次dispatch给state赋予默认值
-//    * 4.componentDidMount后会通过subscribe往状态池中追加事件
-//    * 5.在具体的事件处触发dispatch,传入具体的action,修改state的值,并且触发事件池中的事件，从而更新组件
-//    */
-//   let state,
-//     listeners = [];
-//   function dispatch(action) {
-//     //传入state和action,返回修改后最新的state状态值
-//     state = reducer(state, action);
-//     //通知事件事件池中的方法执行
-//     for (let i = 0; i < listeners.length; i++) {
-//       let curFn = listeners[i];
-//       if (typeof curFn === "function") {
-//         curFn();
-//         continue;
-//       }
-//       //不是函数的移除掉
-//       listeners[i].splice(i, 1);
-//       i--;
-//     }
+// const initialState = { sum: 0 }
+
+// function reduceTest(state = initialState, action) {
+//   switch(action.type) {
+//     case 'add':
+//       return {...state, sum: state.sum + 1}
+//     case 'decrease':
+//       return {...state, sum: state.sum - 1}
+//     default:
+//       return state
 //   }
-//   //组件通过getState获取最新的状态值（此处要深拷贝一下，避免组件直接通过对象引用修改状态值，redux的源码中貌似没有深拷贝，存在一些缺陷）
-//   function getState() {
-//     return JSON.parse(JSON.stringify(state));
-//   }
-//   function subscribe(fn) {
-//     //此处进行一个去重复，避免添加重复的事件（redux的源码中貌似也没有去重复,存在一些缺陷）
-//     for (let i = 0; i < listeners.length; i++) {
-//       if (listeners[i] === fn) {
-//         return;
-//       }
-//     }
-//     listeners.push(fn);
-//     //返回一个移除事件的函数，可以进行调用，从事件池中移除追加的事件
-//     return function unsubscribe() {
-//       let index = listeners.indexOf(fn);
-//       if (index > -1) {
-//         // listeners.splice(index, 1);  //这个地方不能用splice,可能会导致数组塌陷问题
-//         listeners[index] = null;
-//       }
-//     };
-//   }
-//   //创建的时候先调用一下，为了是当默认state没值的时候，触发reducer给初始化的state赋予一个默认值
-//   dispatch({
-//     type: `@@redux/INIT${Math.random()}`,
-//   });
-//   return {
-//     dispatch,
-//     getState,
-//     subscribe,
-//   };
 // }
 
-const initialState = { sum: 0 }
+// const myStore = createStore(reduceTest)
+// myStore.subscribe(() => console.log(myStore.getState()))
+// myStore.dispatch({type: 'add'})
+// myStore.dispatch({type: 'decrease'})
+// myStore.dispatch({type: 'add'})
+// myStore.dispatch({type: 'add'})
+// myStore.dispatch({type: 'add'})
 
-function reduceTest(state = initialState, action) {
-  switch(action.type) {
-    case 'add':
-      return {...state, sum: state.sum + 1}
-    case 'decrease':
-      return {...state, sum: state.sum - 1}
-    default:
-      return state
+// function createStore(reducer) {
+//   let state
+//   let listener = []
+//   function subscribe(cb) {
+//     listener.push(cb)
+//   }
+//   function dispatch(action) {
+//     state = reducer(state, action)
+//     for (let i = 0; i < listener.length; i++) {
+//       if (typeof listener[i] === 'function') {
+//         listener[i]()
+//       }
+//     }
+//   }
+//   function getState() {
+//     return state
+//   }
+//   return {
+//     dispatch,
+//     subscribe,
+//     getState
+//   }
+// }
+
+export default function createStore(reducer, preloadedState) {
+  // 保存reducer的变量
+  let currentReducer = reducer
+  // 保存state的变量
+  let currentState = preloadedState
+  // 订阅状态的改变，在state改变之后会触发里面的监听事件
+  let currentListeners = []
+
+  // 获取当前的state
+  function getState() {
+    return currentState
   }
-}
 
-const myStore = createStore(reduceTest)
-myStore.subscribe(() => console.log(myStore.getState()))
-myStore.dispatch({type: 'add'})
-myStore.dispatch({type: 'decrease'})
-myStore.dispatch({type: 'add'})
-myStore.dispatch({type: 'add'})
-myStore.dispatch({type: 'add'})
+  // 订阅函数
+  function subscribe(listener: () => void) {
 
-function createStore(reducer) {
-  let state
-  let listener = []
-  function subscribe(cb) {
-    listener.push(cb)
-  }
-  function dispatch(action) {
-    state = reducer(state, action)
-    for (let i = 0; i < listener.length; i++) {
-      if (typeof listener[i] === 'function') {
-        listener[i]()
+    let isSubscribed = true
+    // 将订阅函数放到listeners队列中，state更新后会一次调用里面的函数
+    currentListeners.push(listener)
+    // 返回一个取消订阅的函数
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return
       }
+
+      isSubscribed = false
+
+      const index = currentListeners.indexOf(listener)
+      currentListeners.splice(index, 1)
     }
   }
-  function getState() {
-    return state
+
+  // 分发action的函数
+  function dispatch(action) {
+    // 执行reducer，根据action生成新的state保存到currentState
+    currentState = currentReducer(currentState, action)
+
+    const listeners = currentListeners
+    // 依次触发listeners中订阅的函数，更新UI
+    for (let i = 0; i < listeners.length; i++) {
+      const listener = listeners[i]
+      listener()
+    }
+
+    return action
   }
-  return {
-    dispatch,
+
+  // 这里触发一个dispatch，不会命中reducer里面的任何逻辑，
+  // 所以直接走default，返回初始的state，达到设置初始默认值的目的
+  dispatch({ type: ActionTypes.INIT })
+  // 闭包
+  const store = {
+    dispatch: dispatch,
     subscribe,
-    getState
+    getState,
+    // ...
+  }
+  return store
+}
+
+const store = createStore(reducer, initState， applyMiddleware(Middleware1, Middleware2...))
+
+export default function applyMiddleware(
+  ...middlewares
+) {
+  // 返回一个函数，接受参数是createStore方法。
+  return (createStore) => <S, A extends AnyAction>(
+    reducer: Reducer<S, A>,
+    preloadedState?: PreloadedState<S>
+  ) => {
+    // 调用createStore，创建一个store
+    const store = createStore(reducer, preloadedState)
+    let dispatch: Dispatch = () => {
+      throw new Error(
+        'Dispatching while constructing your middleware is not allowed. ' +
+          'Other middleware would not be applied to this dispatch.'
+      )
+    }
+    // middleware接受的参数，一个middleware实际上就是一个函数
+    // 参数包含两个属性，getState和dispatch，所以一个redux的中间件需要接受并使用这两个方法
+    const middlewareAPI: MiddlewareAPI = {
+      getState: store.getState,
+      dispatch: (action, ...args) => dispatch(action, ...args)
+    }
+    // 遍历middleware数组，给middleware数组传递上面的middlewareAPI参数，得到一个新的函数数组
+    const chain = middlewares.map(middleware => middleware(middlewareAPI))
+    // 得到一个新的dispatch方法，替换原有store的dispatch方法。
+    // 新的dispatch方法通过compose方法将上一步得到的函数数组组合成一个函数，具体如何做到的，下面会描述。
+    dispatch = compose<typeof dispatch>(...chain)(store.dispatch)
+    // 返回一个新的store对象，dispatch是通过compose函数得到的新的dispatch方法
+    return {
+      ...store,
+      dispatch
+    }
   }
 }
+
+export default function compose(...funcs: Function[]) {
+  // 处理数组为空的边界case
+  if (funcs.length === 0) {
+    return (arg) => arg
+  }
+  // 处理数组为1的情况，这种情况下也不需要组合，直接返回第一个元素就行
+  if (funcs.length === 1) {
+    return funcs[0]
+  }
+  // 有多个函数，通过 array的reduce方法来组合
+  return funcs.reduce((a, b) => (...args: any) => a(b(...args)))
+}
+
+/************** redux-thunk中间件原理      */
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => (next) => (action) => {
+    // 当action是一个函数的时候，调用这个函数，传递dispatch、getState给action
+    // 在action函数中去处理异步逻辑，调用dispatch
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+    // 如果不是函数，就是一个正常的同步action，直接dispatch
+    return next(action);
+  };
+}
+
+const thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+export default thunk;
