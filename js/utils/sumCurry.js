@@ -16,3 +16,24 @@ function sumCurry(...rest) {
 
   return fn
 }
+
+// plus(1)(2)(3)(4)()
+
+function plus(...rest) {
+  let args = rest
+  function sum() {
+    return args.reduce((pre, cur) => pre + cur, 0)
+  }
+  const fn = function (...arg) {
+    if (arg.length === 0) {
+      return sum()
+    } else {
+      args = args.concat(arg)
+    }
+    return fn
+  }
+  return fn
+}
+console.log(plus(1)(2)(3)(4)())
+console.log(plus(1)(2)(3, 6, 7)(4)(5)())
+
