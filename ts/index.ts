@@ -175,3 +175,17 @@ let name3: {
   b: string;
 }
 
+
+type Person = {
+	name: string;
+  age: number;
+} | {
+	height: number;
+  weight: number;
+} | {
+	id: number;
+}
+
+let person: Person = {
+  id: 1
+}

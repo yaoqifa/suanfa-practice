@@ -6,6 +6,12 @@ function arrFlatten(list) {
   }, [])
 }
 
+function arrFlattenWithLevel(list, level = 1) {
+    return level ? list.reduce((pre, cur) => {
+      return pre.concat(Array.isArray(cur) ? arrFlattenWithLevel(cur, level - 1) : cur)
+    }, []) : list.slice()
+}
+
 //  对象扁平化
 //  说明：请实现 flatten(input) 函数，input 为一个 javascript 对象（Object 或者 Array），返回值为扁平化后的结果。
 //  示例：

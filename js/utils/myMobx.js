@@ -8,7 +8,7 @@ function observable(target) {
   const _target = { ...target };
   let proxy = {};
   let subs = new Map();
--
+
   Object.keys(target).forEach((key) => {
     Object.defineProperty(proxy, key, {
       get() {

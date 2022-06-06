@@ -46,3 +46,6 @@ module.exports = function lessLoader(source) {
     this.callback(err, output.css)
   })
 }
+
+// this.emitFile(outpath, content) 输出一个文件到打包产物中
+// resolveLoader 加载自定义loader

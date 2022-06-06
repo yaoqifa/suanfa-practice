@@ -1,3 +1,4 @@
+// 商汤面试题
 function calculate(str) {
   let res = 0
   let arr = []
@@ -30,14 +31,11 @@ function calculate(str) {
   })
   return res
 }
-
 const test = '10+20-40'
 console.log(calculate(test)) // -10
 const test2 = '10+20-40+50+60+3-4.2'
 console.log(calculate(test2))
 const test3 = '10+20+30+4+5+6'
 console.log(calculate(test3)) // 75
-
 const test4 = '-10+20-40'
-
 console.log(calculate(test4))
